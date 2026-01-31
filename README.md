@@ -1,11 +1,33 @@
-<div align="center">
+# BioRisk Guard
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+Enterprise Risk & Compliance Autopilot (ERCA) for healthcare and biotech.
 
-  <h1>Built with AI Studio</h2>
+## Core Architecture
+- **Multi-Agent Orchestration**: Specialized agents for Compliance, Genomic Risk (GenoSym-AI), and Financial Stability.
+- **Enterprise UI**: IBM Carbon-inspired design system.
+- **AI Core**: Powered by Google Gemini 3 Pro.
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+## Setup Instructions
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+1.  **Environment Setup**:
+    - Rename `.env.local.example` (or create a new `.env.local`) and add your `API_KEY`.
+    - Note: The application expects `process.env.API_KEY` to interact with the Google GenAI SDK.
 
-</div>
+2.  **Installation**:
+    ```bash
+    npm install
+    ```
+
+3.  **Development**:
+    ```bash
+    npm run dev
+    ```
+
+## Risk Scoring Protocol
+The system uses a 1-10 risk scale:
+- **1-3 (Low)**: Nominal risk, proceed with standard monitoring.
+- **4-6 (Medium)**: Review required, potential compliance gaps detected.
+- **7-10 (Critical)**: Immediate intervention required; potential data bias or financial instability.
+
+---
+*Built with React, Tailwind CSS, and Google Gemini API.*

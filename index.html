@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BioRisk Guard - Enterprise AI Risk Management</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ibm: {
+              blue: '#0062FF',
+              green: '#00C853',
+              dark: '#161616',
+              gray: '#262626',
+              lightGray: '#393939',
+              accent: '#4589ff'
+            }
+          },
+          fontFamily: {
+            sans: ['IBM Plex Sans', 'sans-serif'],
+            mono: ['IBM Plex Mono', 'monospace'],
+          },
+          keyframes: {
+            shake: {
+              '0%, 100%': { transform: 'translateX(0)' },
+              '10%, 30%, 50%, 70%, 90%': { transform: 'translateX(-10px)' },
+              '20%, 40%, 60%, 80%': { transform: 'translateX(10px)' },
+            }
+          },
+          animation: {
+            shake: 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #161616;
+      color: #f4f4f4;
+      font-family: 'IBM Plex Sans', sans-serif;
+    }
+    .carbon-border { border-color: #393939; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #161616; }
+    ::-webkit-scrollbar-thumb { background: #393939; }
+    
+    .dna-tooltip {
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 1000;
+    }
+
+    /* Watson Theme Easter Egg */
+    .watson-theme {
+      --primary: #8A3FFC;
+      --secondary: #08BDBA;
+      background-color: #001141;
+    }
+    .watson-theme body { background-color: #001141; }
+    .watson-theme .bg-ibm-blue { background-color: #8A3FFC !important; }
+    .watson-theme .text-ibm-blue { color: #08BDBA !important; }
+
+    /* Hackathon Mode Style */
+    .hackathon-active {
+      --glow-color: #00FF00;
+    }
+    .hackathon-active .border-ibm-blue { border-color: #00FF00 !important; }
+    .hackathon-active .text-ibm-blue { color: #00FF00 !important; }
+
+    /* Accessibility High Contrast */
+    .high-contrast {
+      filter: contrast(1.5) saturate(1.2);
+    }
+    .high-contrast body {
+      background-color: #000;
+      color: #fff;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.3; }
+      50% { opacity: 1; }
+      100% { opacity: 0.3; }
+    }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.sh/@google/genai@^1.38.0",
+    "recharts": "https://esm.sh/recharts@^3.7.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.13.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react-hook-form": "https://esm.sh/react-hook-form@^7.54.2",
+    "three": "https://esm.sh/three@0.174.0"
+  }
+}
+</script>
+</head>
+<body>
+  <div id="root"></div>
+</body>
+</html>

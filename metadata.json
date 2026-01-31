@@ -1,0 +1,7 @@
+{
+  "name": "BioRisk Guard",
+  "description": "Enterprise-grade Risk & Compliance Autopilot (ERCA) utilizing multi-agent AI to detect genomic bias, compliance violations, and financial instability in healthcare vendors.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

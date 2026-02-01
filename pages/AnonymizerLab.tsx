@@ -1,27 +1,19 @@
-
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   EyeOff, 
   ShieldCheck, 
-  ArrowRight, 
-  Download, 
-  AlertTriangle, 
-  CheckCircle2, 
   Loader2, 
   Fingerprint,
-  FileText,
-  Lock,
-  Zap,
-  Info,
-  ChevronDown,
   Database,
+  ChevronDown,
   BarChart3,
   Terminal,
-  ShieldAlert
+  ShieldAlert,
+  // Fix: Added missing CheckCircle2 import
+  CheckCircle2
 } from 'lucide-react';
 import { useHackathon } from '../context/HackathonContext';
 import { sounds } from '../services/soundService';
-import { useNavigate } from 'react-router-dom';
 
 interface SampleData {
   name: string;
@@ -78,8 +70,7 @@ ATGCGTACGTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGC`
 };
 
 const AnonymizerLab: React.FC = () => {
-  const navigate = useNavigate();
-  const { isHackathonMode, isAutoDemoActive } = useHackathon();
+  const { isHackathonMode } = useHackathon();
   const [selectedKey, setSelectedKey] = useState<keyof typeof SAMPLES>('BRCA1');
   const [aggressiveness, setAggressiveness] = useState(85);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -114,17 +105,7 @@ const AnonymizerLab: React.FC = () => {
   const utilityScore = 100 - Math.floor((aggressiveness - 50) * 1.5);
 
   return (
-    <div className={`p-10 space-y-10 max-w-[1600px] mx-auto animate-in fade-in duration-700 ${isAutoDemoActive ? 'ring-4 ring-indigo-500/20' : ''}`}>
-      {isAutoDemoActive && (
-        <div className="bg-indigo-600 text-white px-6 py-2 rounded-sm flex items-center justify-between shadow-lg">
-           <span className="text-[10px] font-black uppercase tracking-[0.3em] flex items-center gap-2">
-              <Loader2 className="w-4 h-4 animate-spin" />
-              Auto-Demo Active: Genomic Anonymizer
-           </span>
-           <span className="text-[9px] font-mono opacity-60">Protecting Sensitive Data...</span>
-        </div>
-      )}
-
+    <div className="p-10 space-y-10 max-w-[1600px] mx-auto animate-in fade-in duration-700">
       {/* Header */}
       <div className="flex justify-between items-end border-b border-[#393939] pb-8">
         <div className="flex items-center gap-5">

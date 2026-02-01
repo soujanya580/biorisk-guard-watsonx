@@ -1,43 +1,27 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   History, 
-  Search, 
-  Filter, 
   ShieldCheck, 
-  ChevronRight,
   Database,
-  Cpu,
-  Clock,
   Link as LinkIcon,
   ShieldAlert,
   CheckCircle2,
   Box,
   Fingerprint,
   Lock,
-  ArrowRight,
-  Zap,
   Globe,
   Loader2,
-  Trash2,
-  Info,
-  Calendar,
-  AlertTriangle,
-  Download,
-  Terminal,
+  Monitor,
   Shield,
-  Check,
-  Monitor
+  Check
 } from 'lucide-react';
 import { api } from '../services/api';
 import { AuditLog } from '../types';
 import { COLORS } from '../constants';
 import { sounds } from '../services/soundService';
-import { useHackathon } from '../context/HackathonContext';
 
 const AuditLogs: React.FC = () => {
-  const { isHackathonMode, isAutoDemoActive } = useHackathon();
   const [logs, setLogs] = useState<AuditLog[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
   const [verifyingIndex, setVerifyingIndex] = useState<number | null>(null);
   const [isVerifyingAll, setIsVerifyingAll] = useState(false);
@@ -56,11 +40,6 @@ const AuditLogs: React.FC = () => {
   const sortedLogsForChain = useMemo(() => [...logs].sort((a, b) => 
     new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
   ), [logs]);
-
-  const filteredLogs = useMemo(() => logs.filter(l => 
-    l.vendorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    l.action.toLowerCase().includes(searchTerm.toLowerCase())
-  ), [logs, searchTerm]);
 
   const handleVerifyFullChain = async () => {
     setIsVerifyingAll(true);

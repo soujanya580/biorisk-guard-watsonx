@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Bell, HelpCircle, ChevronDown, Terminal, Play, Square, Clock, Zap, PauseCircle } from 'lucide-react';
+import { Search, Bell, HelpCircle, ChevronDown, Terminal, Clock } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { NAVIGATION } from '../constants';
-import { useHackathon, FULL_DEMO_PATH } from '../context/HackathonContext';
-import { sounds } from '../services/soundService';
+import { useHackathon } from '../context/HackathonContext';
 import { api } from '../services/api';
 import { Alert } from '../types';
 
@@ -14,81 +13,13 @@ const Header: React.FC = () => {
   const [isGenosymActive, setIsGenosymActive] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [alerts, setAlerts] = useState<Alert[]>([]);
-  const { isHackathonMode, toggleHackathonMode, isAutoDemoActive, runAutoDemo, stopAutoDemo, demoStepIndex, setDemoStepIndex } = useHackathon();
+  const { isHackathonMode, toggleHackathonMode } = useHackathon();
   const notificationRef = useRef<HTMLDivElement>(null);
-  
-  // Use a ref to track if demo loop should continue
-  const activeTourRef = useRef<boolean>(false);
   
   useEffect(() => {
     const unsubscribe = api.subscribeToAlerts(setAlerts);
     return unsubscribe;
   }, []);
-
-  // PERFECT SYNC GUIDED TOUR LOOP
-  useEffect(() => {
-    if (isAutoDemoActive && demoStepIndex >= 0 && !activeTourRef.current) {
-      const executePerfectSyncStep = async (index: number) => {
-        if (!isAutoDemoActive || index >= FULL_DEMO_PATH.length) {
-          stopAutoDemo();
-          activeTourRef.current = false;
-          navigate('/'); // Return home when done
-          return;
-        }
-
-        activeTourRef.current = true;
-        const step = FULL_DEMO_PATH[index];
-
-        // 1. SWITCH TAB FIRST (INSTANTLY)
-        if (location.pathname !== step.path) {
-          navigate(step.path);
-        }
-
-        // 2. WAIT JUST 50ms FOR RENDER (as requested)
-        await new Promise(r => setTimeout(r, 50));
-
-        // 3. SPEAK IMMEDIATELY (Using native TTS for zero-latency start in Tour)
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(step.narrative);
-        const voices = window.speechSynthesis.getVoices();
-        const preferredVoice = voices.find(v => v.lang === 'en-US' && v.name.includes('Google')) || 
-                               voices.find(v => v.lang.startsWith('en-US')) || 
-                               voices[0];
-        if (preferredVoice) utterance.voice = preferredVoice;
-        utterance.rate = 0.85; // Slower and clearer
-        utterance.pitch = 1.0;
-        utterance.volume = 1.0;
-
-        // Promise to handle completion
-        const speechEnded = new Promise<void>((resolve) => {
-          utterance.onend = () => resolve();
-          // Fallback timer if onend fails (character count * 65ms + buffer)
-          setTimeout(resolve, step.narrative.length * 75 + 1000);
-        });
-
-        window.speechSynthesis.speak(utterance);
-
-        // 4. WAIT FOR SPEECH FINISH + BUFFER
-        await speechEnded;
-        await new Promise(r => setTimeout(r, 400)); // Small breathing room between steps
-
-        // 5. TRIGGER NEXT STEP
-        if (isAutoDemoActive && activeTourRef.current) {
-          activeTourRef.current = false;
-          setDemoStepIndex(index + 1);
-        }
-      };
-
-      executePerfectSyncStep(demoStepIndex);
-    }
-    
-    return () => {
-      if (!isAutoDemoActive) {
-        activeTourRef.current = false;
-        window.speechSynthesis.cancel();
-      }
-    };
-  }, [demoStepIndex, isAutoDemoActive, navigate]);
 
   useEffect(() => {
     if (searchValue.toLowerCase() === 'genosym') {
@@ -108,42 +39,11 @@ const Header: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleStartFullDemo = () => {
-    sounds.playTone(880, 0.2);
-    runAutoDemo();
-  };
-
-  const handleStopDemo = () => {
-    sounds.playTone(440, 0.2);
-    activeTourRef.current = false;
-    stopAutoDemo();
-    navigate('/');
-  };
-
   const unreadCount = alerts.filter(a => !a.isRead).length;
   const pageTitle = NAVIGATION.find(item => item.path === location.pathname)?.name || 'BioRisk Guard';
 
   return (
     <div className="sticky top-0 z-40">
-      {isAutoDemoActive && demoStepIndex >= 0 && (
-        <div className="bg-[#00C853] h-10 flex items-center px-8 justify-between text-[#161616] overflow-hidden animate-in slide-in-from-top duration-300">
-          <div className="flex items-center gap-4 flex-1">
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] flex items-center gap-2">
-              <Zap className="w-3.5 h-3.5 fill-current animate-pulse" />
-              TOUR ACTIVE: {FULL_DEMO_PATH[demoStepIndex]?.name || 'Finalizing'}
-            </span>
-            <div className="flex-1 max-w-md h-1 bg-[#161616]/20 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-[#161616] transition-all duration-1000 ease-linear"
-                style={{ width: `${((demoStepIndex + 1) / FULL_DEMO_PATH.length) * 100}%` }}
-              />
-            </div>
-          </div>
-          <div className="flex items-center gap-6 font-mono text-[10px] font-bold">
-            <span className="opacity-70 uppercase tracking-widest">Built with IBM Best Practices</span>
-          </div>
-        </div>
-      )}
       <header className="h-16 bg-[#161616] border-b border-[#393939] flex items-center justify-between px-8" role="banner">
         <div className="flex items-center gap-6">
           <h2 className="text-lg font-semibold text-white tracking-wide">{pageTitle}</h2>
@@ -161,28 +61,6 @@ const Header: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-4">
-          {/* TOUR CONTROLS */}
-          <div className="flex gap-2">
-            {!isAutoDemoActive ? (
-              <button 
-                onClick={handleStartFullDemo}
-                className="flex items-center gap-3 px-6 py-2.5 bg-[#00C853] hover:bg-[#00a846] text-[#161616] rounded-sm text-[11px] font-black uppercase tracking-[0.2em] transition-all shadow-xl shadow-[#00C853]/30 active:scale-[0.98]"
-              >
-                <Play className="w-4 h-4 fill-current" />
-                START GUIDED TOUR
-              </button>
-            ) : (
-              <button 
-                onClick={handleStopDemo}
-                className="flex items-center gap-2 px-4 py-2.5 bg-[#393939] border border-[#525252] hover:bg-[#525252] text-white rounded-sm text-[10px] font-black uppercase tracking-[0.15em] transition-all shadow-lg"
-                title="Pause Tour"
-              >
-                <PauseCircle className="w-4 h-4" />
-                PAUSE TOUR
-              </button>
-            )}
-          </div>
-
           <button 
             onClick={toggleHackathonMode}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${

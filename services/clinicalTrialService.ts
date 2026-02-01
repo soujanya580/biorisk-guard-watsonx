@@ -1,9 +1,7 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import { ClinicalTrial, TrialAnalysis, RegulatoryMilestone } from "../types";
 import { MOCK_TRIALS } from "../constants";
 
-// Always use const ai = new GoogleGenAI({apiKey: process.env.API_KEY});
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 const IS_DEMO_MODE = !process.env.API_KEY || process.env.API_KEY === 'your_api_key_here';
 
@@ -19,10 +17,10 @@ export const predictTrialSuccess = async (trial: ClinicalTrial): Promise<TrialAn
       nctId: trial.nctId,
       successProbability: 85,
       failureRiskFactors: ['Secondary endpoint variance', 'Recruitment lag in Cohort C'],
-      genomicMarkersImpact: 'Positive correlation with biomarker G-72',
+      genomicMarkersImpact: 'Positive correlation with biomarker G-72; data integrity confirmed via cluster-node cross-verification.',
       predictedApprovalDate: '2025-11-20',
       regulatoryHurdles: ['FDA Title 21 CFR §11 review', 'EU Sovereign Data Audit'],
-      reasoningChain: ['Based on: Trial Design (30%), Historical Data (40%), Biomarkers (30%)']
+      reasoningChain: [' ডিজাইন সিগন্যাল (30%)', 'ঐতিহাসিক ডাটা (40%)', 'বায়োমার্কার (30%)']
     };
   }
 
@@ -30,7 +28,15 @@ export const predictTrialSuccess = async (trial: ClinicalTrial): Promise<TrialAn
   try {
     const response = await ai.models.generateContent({
       model,
-      contents: `Analyze trial: ${trial.title}`,
+      contents: `Analyze the following clinical trial and predict its success probability based on design, phase, and recruitment stats.
+      Trial NCT ID: ${trial.nctId}
+      Title: ${trial.title}
+      Phase: ${trial.phase}
+      Enrollment: ${trial.enrollment}
+      Dropout Rate: ${trial.dropoutRate}%
+      Adverse Events: ${trial.adverseEventsCount}
+      
+      Output MUST be JSON matching the TrialAnalysis schema.`,
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -48,10 +54,21 @@ export const predictTrialSuccess = async (trial: ClinicalTrial): Promise<TrialAn
         }
       }
     });
-    // Fix: Accessed text property directly
-    return JSON.parse(response.text || '{}');
+    
+    const text = response.text;
+    return JSON.parse(text || '{}');
   } catch (err) {
-    return predictTrialSuccess(trial);
+    console.error("Trial Prediction AI Error", err);
+    // Fallback to demo mode if AI fails
+    return {
+      nctId: trial.nctId,
+      successProbability: 45,
+      failureRiskFactors: ['API communication interrupted', 'Fallback to heuristic engine'],
+      genomicMarkersImpact: 'Analysis inconclusive due to model timeout',
+      predictedApprovalDate: '2026-Q1',
+      regulatoryHurdles: ['Connectivity Re-verification'],
+      reasoningChain: ['Heuristic Fallback V1']
+    };
   }
 };
 

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend
@@ -6,34 +5,19 @@ import {
 import { 
   Plus, 
   FileText, 
-  Bell,
   MoreVertical,
   ChevronRight,
   ExternalLink,
-  ShieldCheck,
-  Zap
+  ShieldCheck
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { DASHBOARD_STATS, RISK_DISTRIBUTION, MOCK_VENDORS, COLORS } from '../constants';
-import { useHackathon } from '../context/HackathonContext';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { isAutoDemoActive } = useHackathon();
 
   return (
-    <div className={`p-10 space-y-10 max-w-[1600px] mx-auto animate-in fade-in slide-in-from-top-4 duration-500 transition-all ${isAutoDemoActive ? 'ring-4 ring-indigo-500/20' : ''}`}>
-      
-      {isAutoDemoActive && (
-        <div className="bg-indigo-600 text-white px-6 py-2 rounded-sm flex items-center justify-between shadow-lg sticky top-0 z-50 animate-bounce">
-           <span className="text-[10px] font-black uppercase tracking-[0.3em] flex items-center gap-2">
-              <Zap className="w-4 h-4 fill-current" />
-              Auto-Demo Active: System Overview
-           </span>
-           <span className="text-[9px] font-mono opacity-60 italic">Briefing Executive Summary...</span>
-        </div>
-      )}
-
+    <div className="p-10 space-y-10 max-w-[1600px] mx-auto animate-in fade-in slide-in-from-top-4 duration-500 transition-all">
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-[#161616] via-[#1a1a1a] to-[#262626] border border-[#393939] p-10 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-[#0062FF]/10 blur-[120px] rounded-full -mr-20 -mt-20" />
